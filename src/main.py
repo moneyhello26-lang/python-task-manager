@@ -9,12 +9,35 @@ APP_TITLE = "Менеджер задач"
 DEFAULT_DATA = Path.home() / ".python-task-manager.json"
 
 
+def run_menu(data_path: Path) -> int:
+    while True:
+        print("\n1. Список задач\n2. Добавить задачу\n0. Выход")
+        choice = input("Выберите пункт: ").strip()
+        if choice == "0":
+            return 0
+        if choice == "1":
+            print("\n".join(list_tasks(load_tasks(data_path))) or "Задач пока нет")
+        elif choice == "2":
+            title = input("Название задачи: ").strip()
+            if not title:
+                print("Название не может быть пустым")
+                continue
+            tasks = load_tasks(data_path)
+            task = add_task(tasks, title)
+            save_tasks(tasks, data_path)
+            print(f"Добавлена задача {task['id']}")
+        else:
+            print("Нет такого пункта меню")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=APP_TITLE)
-    parser.add_argument("command", choices=["add", "list"])
+    parser.add_argument("command", choices=["add", "list", "menu"])
     parser.add_argument("title", nargs="?")
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     args = parser.parse_args(argv)
+    if args.command == "menu":
+        return run_menu(args.data)
     tasks = load_tasks(args.data)
     if args.command == "add":
         if not args.title:
