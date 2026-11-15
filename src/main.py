@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 
-from src.core import add_task, list_tasks, load_tasks, save_tasks
+from src.core import add_task, list_tasks, load_tasks, save_tasks, search_tasks
 
 APP_TITLE = "Консольный менеджер задач"
 DEFAULT_DATA = Path.home() / ".python-task-manager.json"
@@ -32,7 +32,7 @@ def run_menu(data_path: Path) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=APP_TITLE)
-    parser.add_argument("command", choices=["add", "list", "menu"])
+    parser.add_argument("command", choices=["add", "list", "menu", "search"])
     parser.add_argument("title", nargs="?")
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     args = parser.parse_args(argv)
@@ -45,6 +45,10 @@ def main(argv: list[str] | None = None) -> int:
         task = add_task(tasks, args.title)
         save_tasks(tasks, args.data)
         print(f"Добавлена задача {task['id']}: {task['title']}")
+    elif args.command == "search":
+        if not args.title:
+            parser.error("для search укажите текст поиска")
+        print("\n".join(list_tasks(search_tasks(tasks, args.title))) or "Совпадений нет")
     else:
         print("\n".join(list_tasks(tasks)) or "Задач пока нет")
     return 0
