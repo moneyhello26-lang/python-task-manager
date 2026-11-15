@@ -25,3 +25,11 @@ def add_task(tasks: list[dict], title: str) -> dict:
 def list_tasks(tasks: list[dict]) -> list[str]:
     return [f"{task['id']}. [{'x' if task['done'] else ' '}] {task['title']}"
             for task in tasks]
+
+
+def complete_task(tasks: list[dict], task_id: int) -> bool:
+    for task in tasks:
+        if task["id"] == task_id:
+            task["done"] = True
+            return True
+    return False
