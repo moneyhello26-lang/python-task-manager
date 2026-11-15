@@ -3,7 +3,8 @@
 import argparse
 from pathlib import Path
 
-from src.core import add_task, list_tasks, load_tasks, save_tasks, search_tasks
+from src.core import (add_task, complete_task, delete_task, list_tasks,
+                      load_tasks, save_tasks, search_tasks)
 
 APP_TITLE = "Планировщик задач Python"
 DEFAULT_DATA = Path.home() / ".python-task-manager.json"
@@ -32,7 +33,7 @@ def run_menu(data_path: Path) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=APP_TITLE)
-    parser.add_argument("command", choices=["add", "list", "menu", "search"])
+    parser.add_argument("command", choices=["add", "list", "menu", "search", "complete", "delete"])
     parser.add_argument("title", nargs="?")
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     args = parser.parse_args(argv)
@@ -42,9 +43,23 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "add":
         if not args.title:
             parser.error("для add укажите название задачи")
-        task = add_task(tasks, args.title)
+        try:
+            task = add_task(tasks, args.title)
+        except ValueError as error:
+            parser.error(str(error))
         save_tasks(tasks, args.data)
         print(f"Добавлена задача {task['id']}: {task['title']}")
+    elif args.command in {"complete", "delete"}:
+        try:
+            task_id = int(args.title or "")
+        except ValueError:
+            parser.error("укажите числовой номер задачи")
+        operation = complete_task if args.command == "complete" else delete_task
+        if not operation(tasks, task_id):
+            print(f"Задача {task_id} не найдена")
+            return 1
+        save_tasks(tasks, args.data)
+        print(f"Задача {task_id} {'выполнена' if args.command == 'complete' else 'удалена'}")
     elif args.command == "search":
         if not args.title:
             parser.error("для search укажите текст поиска")

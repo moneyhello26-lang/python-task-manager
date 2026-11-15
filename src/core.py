@@ -45,3 +45,11 @@ def search_tasks(tasks: list[dict], query: str) -> list[dict]:
     if not query:
         return []
     return [task for task in tasks if query in task["title"].casefold()]
+
+
+def delete_task(tasks: list[dict], task_id: int) -> bool:
+    for index, task in enumerate(tasks):
+        if task["id"] == task_id:
+            del tasks[index]
+            return True
+    return False

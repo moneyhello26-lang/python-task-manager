@@ -28,6 +28,16 @@ class MenuTests(unittest.TestCase):
                 main(["search", "git", "--data", str(path)])
             self.assertIn("1. [ ] Проверить Git", output.getvalue())
 
+    def test_complete_and_delete_commands(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "tasks.json"
+            with redirect_stdout(StringIO()):
+                main(["add", "Написать тест", "--data", str(path)])
+                self.assertEqual(main(["complete", "1", "--data", str(path)]), 0)
+                self.assertTrue(load_tasks(path)[0]["done"])
+                self.assertEqual(main(["delete", "1", "--data", str(path)]), 0)
+            self.assertEqual(load_tasks(path), [])
+
 
 if __name__ == "__main__":
     unittest.main()
