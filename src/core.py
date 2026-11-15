@@ -38,3 +38,10 @@ def complete_task(tasks: list[dict], task_id: int) -> bool:
             task["done"] = True
             return True
     return False
+
+
+def search_tasks(tasks: list[dict], query: str) -> list[dict]:
+    query = query.strip().casefold()
+    if not query:
+        return []
+    return [task for task in tasks if query in task["title"].casefold()]
