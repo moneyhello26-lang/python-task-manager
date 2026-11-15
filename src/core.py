@@ -16,6 +16,11 @@ def save_tasks(tasks: list[dict], path: Path) -> None:
 
 
 def add_task(tasks: list[dict], title: str) -> dict:
+    title = title.strip()
+    if not title:
+        raise ValueError("Название задачи не может быть пустым")
+    if len(title) > 120:
+        raise ValueError("Название задачи не может быть длиннее 120 символов")
     task = {"id": max((task["id"] for task in tasks), default=0) + 1,
             "title": title, "done": False}
     tasks.append(task)
