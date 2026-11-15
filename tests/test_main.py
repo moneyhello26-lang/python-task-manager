@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.core import add_task, complete_task, list_tasks, load_tasks, save_tasks
+from src.core import add_task, complete_task, list_tasks, load_tasks, save_tasks, search_tasks
 
 
 class TaskTests(unittest.TestCase):
@@ -29,6 +29,13 @@ class TaskTests(unittest.TestCase):
             with self.subTest(title=title):
                 with self.assertRaises(ValueError):
                     add_task([], title)
+
+    def test_search_ignores_letter_case(self):
+        tasks = []
+        add_task(tasks, "Изучить Git")
+        add_task(tasks, "Оформить отчёт")
+        self.assertEqual(search_tasks(tasks, "git"), [tasks[0]])
+        self.assertEqual(search_tasks(tasks, "  "), [])
 
 
 if __name__ == "__main__":
