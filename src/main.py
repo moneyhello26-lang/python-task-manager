@@ -5,7 +5,7 @@ from pathlib import Path
 
 from src.core import add_task, list_tasks, load_tasks, save_tasks
 
-APP_TITLE = "Менеджер задач"
+APP_TITLE = "Консольный менеджер задач"
 DEFAULT_DATA = Path.home() / ".python-task-manager.json"
 
 
