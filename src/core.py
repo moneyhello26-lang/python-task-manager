@@ -1,0 +1,27 @@
+"""Task storage and basic operations."""
+
+import json
+from pathlib import Path
+
+
+def load_tasks(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def save_tasks(tasks: list[dict], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(tasks, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def add_task(tasks: list[dict], title: str) -> dict:
+    task = {"id": max((task["id"] for task in tasks), default=0) + 1,
+            "title": title, "done": False}
+    tasks.append(task)
+    return task
+
+
+def list_tasks(tasks: list[dict]) -> list[str]:
+    return [f"{task['id']}. [{'x' if task['done'] else ' '}] {task['title']}"
+            for task in tasks]
