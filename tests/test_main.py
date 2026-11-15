@@ -24,6 +24,12 @@ class TaskTests(unittest.TestCase):
         self.assertEqual(list_tasks(tasks), ["1. [x] Проверить ветку"])
         self.assertFalse(complete_task(tasks, 99))
 
+    def test_reject_blank_or_long_title(self):
+        for title in ["   ", "x" * 121]:
+            with self.subTest(title=title):
+                with self.assertRaises(ValueError):
+                    add_task([], title)
+
 
 if __name__ == "__main__":
     unittest.main()
