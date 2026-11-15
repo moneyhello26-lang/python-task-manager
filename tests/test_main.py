@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.core import add_task, complete_task, list_tasks, load_tasks, save_tasks, search_tasks
+from src.core import add_task, complete_task, delete_task, list_tasks, load_tasks, save_tasks, search_tasks
 
 
 class TaskTests(unittest.TestCase):
@@ -36,6 +36,13 @@ class TaskTests(unittest.TestCase):
         add_task(tasks, "Оформить отчёт")
         self.assertEqual(search_tasks(tasks, "git"), [tasks[0]])
         self.assertEqual(search_tasks(tasks, "  "), [])
+
+    def test_delete_task(self):
+        tasks = []
+        add_task(tasks, "Удалить меня")
+        self.assertTrue(delete_task(tasks, 1))
+        self.assertEqual(tasks, [])
+        self.assertFalse(delete_task(tasks, 1))
 
 
 if __name__ == "__main__":
